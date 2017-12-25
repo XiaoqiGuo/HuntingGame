@@ -1,4 +1,4 @@
-package com.ygj0930.www.Utils;
+package com.ygj0930.www.Main;
 
 import javax.swing.JFrame;
 import com.ygj0930.www.Bean.HuntingPoints;

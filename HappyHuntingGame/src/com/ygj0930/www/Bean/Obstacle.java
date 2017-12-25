@@ -14,7 +14,7 @@ public class Obstacle {
 
 	public void setLocation(Point p) { location = p; }
 	
-	public void drawWith(Graphics aPen) {
+	public void draw(Graphics aPen) {
 		aPen.setColor(Color.GRAY);
 		aPen.fillOval(location.x - RADIUS,location.y - RADIUS,2 * RADIUS,2 * RADIUS); //ÃÓ≥‰‘≤–Œ
 	}		

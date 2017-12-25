@@ -1,25 +1,25 @@
 package com.ygj0930.www.Bean;
 import java.awt.Color;
 import java.awt.Point;
+
 public class Police extends BaseRobot {
-	private Point target;  //目标点
-	boolean reach;  //是否抓住
 	public String type = "Police";
 	//根据点坐标创建机器人
 	public Police(Point loc) {
 		super(loc);
 	}
 	
+	//警察是青色
 	public Color getColor() {
 		return Color.CYAN;
 	}
 	
 	//找出该名警察需要前往的目标点（小偷上下左右的某个方向）【根据警察的下标来分配目标点】
 	protected Point findTarget(HuntingPoints p) {
-		target = p.getTarget(this);
-		return target;
+		return  p.getTarget(this);
 	}
 	
+	//===以下两个函数合成Bug2算法======
 	//根据目标点，计算出该名警察要去的方向（角度）
 	protected int computeDesiredDirection(Point target){
     	int xdiff,ydiff,d;
@@ -38,7 +38,7 @@ public class Police extends BaseRobot {
 		return d;			
     }
 	
-	//避障策略：转弯90度
+	//绕行障碍物：直接左转90,走一步，避开障碍
 	@Override
 	protected void obstacleAvoiding(int x, int y) {
 		int xdiff,ydiff,d;
