@@ -67,7 +67,7 @@ public class Thief extends BaseRobot {
 	}
 
 	// 避障：转向90度绕开障碍物
-	protected void obstacleAvoiding(int x, int y) {
+	protected void obstacleAvoiding(int x, int y,HuntingPoints p,boolean is_obstacle) {
 		this.direction += 90;
 		if (this.direction > 180)
 			this.direction -= 360;

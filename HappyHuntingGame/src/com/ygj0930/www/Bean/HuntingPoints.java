@@ -95,8 +95,6 @@ public class HuntingPoints {
 		height = 1000;
 	}
 
-	// 终止判断
-
 	// 绘制所有元素：障碍物、警察、小偷
 	public void draw(Graphics aPen) {
 		for (int i = 0; i < Obstacles.size(); i++) {
