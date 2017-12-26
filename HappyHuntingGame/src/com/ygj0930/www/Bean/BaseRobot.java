@@ -48,29 +48,30 @@ public abstract class BaseRobot {
 		middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
 		middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
 
-		// 撞墙检查：若下一步小偷撞墙，则掉头【待解决：若警察也掉头，会出现出去的警察再也回不来...】
-		if (checkForCrahingWall(middle.x, middle.y, p) == false) {
-			if (this.getColor() != Color.CYAN) {
-				direction += 180;
+		// 循环检测壁障位置是否有障碍/墙/其他机器人 by GXQ
+		int count = 7;
+		while ((checkForCrahingWall(middle.x, middle.y, p) == true || checkForCollision(middle.x, middle.y, p) == true)
+				&& count > 0) {
+			if (checkForCrahingWall(middle.x, middle.y, p) == true)
+			// 若碰撞墙：绕行。
+			{
+				direction += 90;
 				if (direction > 180)
 					direction -= 360;
 				if (direction <= -180)
 					direction += 360;
-				middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
-				middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
 			}
-		}
-
-		// 碰撞检测：下一个点是否会碰撞
-		if (checkForCollision(middle.x, middle.y, p) == false) {
-			setLocation(middle); // 下一步的点无碰撞，则更新点坐标：让当前点移动到下一个点
-		} else {
-			// 若碰撞:在检测函数中计算出避障方向。
+			// 若碰撞人或障碍物:在检测函数中计算出避障方向。
 			// 在避障方向上走一步
 			middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
 			middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
-			setLocation(middle);
+			count--;
 		}
+		if (count == 0)
+			return;// 无处可走时先停一步，若是小偷下一步检测应被抓住了，警察可能绕出
+		else
+			setLocation(middle); // 下一步的点无碰撞，则更新点坐标：让当前点移动到下一个点，
+
 	}
 
 	// 定时器每次刷新式更新机器人位置：走一步
@@ -79,7 +80,7 @@ public abstract class BaseRobot {
 	}
 
 	// 避障算法：遇到障碍物时怎么走(参数为障碍点坐标)
-	abstract protected void obstacleAvoiding(int x, int y, HuntingPoints p,boolean is_obstacle);
+	abstract protected void obstacleAvoiding(int x, int y, HuntingPoints p, boolean is_obstacle);
 
 	// 撞墙检测
 	private boolean checkForCrahingWall(int x, int y, HuntingPoints points) {
@@ -92,18 +93,18 @@ public abstract class BaseRobot {
 
 	// 碰撞检查：对下一个点坐标进行检测
 	private boolean checkForCollision(int x, int y, HuntingPoints world) {
-		
-		//========障碍物碰撞检测与避障=====
-		for (int i = 0; i < world.getObstacles().size(); i++) { 
+
+		// ========障碍物碰撞检测与避障=====
+		for (int i = 0; i < world.getObstacles().size(); i++) {
 			int x1 = world.getObstacles().get(i).getLocation().x;
 			int y1 = world.getObstacles().get(i).getLocation().y;
 			if (Point.distance(x1, y1, x, y) < Obstacle.RADIUS + BaseRobot.RADIUS) { // 两点距离小于障碍物半径+机器人半径
-				this.obstacleAvoiding(x1, y1, world,true); //// 计算避障方向
+				this.obstacleAvoiding(x1, y1, world, true); //// 计算避障方向
 				return true;
 			}
 		}
 
-		//========机器人之间碰撞检测与避障=====
+		// ========机器人之间碰撞检测与避障=====
 		int otherRobotIndex = 0;
 		if (this.getColor() == Color.CYAN) { // 检测警察机器人的碰撞
 			while (otherRobotIndex < world.getPolices().size()) {
@@ -114,7 +115,7 @@ public abstract class BaseRobot {
 							(double) world.getPolice(otherRobotIndex).getLocation().x,
 							(double) world.getPolice(otherRobotIndex).getLocation().y) <= 4 * RADIUS * RADIUS) { // 和某个警察碰撞，则避开
 						this.obstacleAvoiding(world.getPolice(otherRobotIndex).getLocation().x,
-								world.getPolice(otherRobotIndex).getLocation().y, world,false);
+								world.getPolice(otherRobotIndex).getLocation().y, world, false);
 						return true;
 					} else
 						otherRobotIndex++;
@@ -129,7 +130,7 @@ public abstract class BaseRobot {
 			while (otherRobotIndex < world.getPolices().size()) {
 				if (Point.distanceSq((double) x, (double) y, (double) world.getPolice(otherRobotIndex).getLocation().x,
 						(double) world.getPolice(otherRobotIndex).getLocation().y) <= 4 * RADIUS * RADIUS) {
-					this.obstacleAvoiding(x, y, world,false); // 计算避障方向
+					this.obstacleAvoiding(x, y, world, false); // 计算避障方向
 					return true;
 				} else
 					otherRobotIndex++;

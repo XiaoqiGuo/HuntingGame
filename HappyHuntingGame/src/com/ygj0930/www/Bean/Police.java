@@ -77,6 +77,7 @@ public class Police extends BaseRobot {
 	private void vectorDirection(int x, int y, HuntingPoints p) {
 		Point targetPoint = p.getTarget(this);
 
+		//====根据向量的平移，我们令障碍物为坐标原点，计算出障碍物指向机器人、目标点的向量坐标值
 		// 障碍物指向机器人的向量
 		double x1 = this.location.x - x;
 		double y1 = this.location.y - y;

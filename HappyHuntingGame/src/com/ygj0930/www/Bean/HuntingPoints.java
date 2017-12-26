@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class HuntingPoints {
-	
+
 	public static final int UPDATE_RATE = 15; // 界面刷新频率
-	
+
 	private Random random = new Random();
-	private int width, height; // 面板的宽、高
+	private int width = 1000, height = 1000; // 面板的宽、高
 	private BaseRobot thief; // 小偷
 	private ArrayList<Point> targets = new ArrayList<Point>(); // 包围小偷的上下左右四个点：警察要到达的围捕点
 	private ArrayList<BaseRobot> polices; // 警察机器人
@@ -56,20 +56,6 @@ public class HuntingPoints {
 		polices = new ArrayList<BaseRobot>();
 		Obstacles = new ArrayList<Obstacle>();
 
-		// 小偷随机出现
-		thief = new Thief(new Point(random.nextInt(900) + 50, random.nextInt(900) + 50));
-		// 根据小偷位置，得出上下左右四个围捕点
-		targets.add(new Point(thief.location.x, thief.location.y + 2 * BaseRobot.RADIUS));
-		targets.add(new Point(thief.location.x, thief.location.y - 2 * BaseRobot.RADIUS));
-		targets.add(new Point(thief.location.x - 2 * BaseRobot.RADIUS, thief.location.y));
-		targets.add(new Point(thief.location.x + 2 * BaseRobot.RADIUS, thief.location.y));
-
-		// 警察随机出现（0~1000）
-		addPolice(new Police(new Point(random.nextInt(500), random.nextInt(500))));
-		addPolice(new Police(new Point(random.nextInt(400) + 500, random.nextInt(500))));
-		addPolice(new Police(new Point(random.nextInt(500), random.nextInt(400) + 500)));
-		addPolice(new Police(new Point(random.nextInt(400) + 500, random.nextInt(400) + 500)));
-
 		// 设置障碍物：16个固定障碍
 		addObstacle(new Obstacle(new Point(50, 50)));
 		addObstacle(new Obstacle(new Point(50, 300)));
@@ -88,11 +74,35 @@ public class HuntingPoints {
 		addObstacle(new Obstacle(new Point(900, 600)));
 		addObstacle(new Obstacle(new Point(900, 900)));
 		for (int i = 0; i <= 15; i++) { // 15个随机障碍
-			addObstacle(new Obstacle(new Point(random.nextInt(900) + 70, random.nextInt(900) + 70)));
+			addObstacle(new Obstacle(new Point(random.nextInt(800) + 100, random.nextInt(800) + 100)));
 		}
-
-		width = 1000;
-		height = 1000;
+		// 警察随机出现：点不能与障碍物位置重合
+		for(int i=0;i<4;i++){
+			Point newPoint = createPoint(800, 800);
+			while(checkPoint(newPoint)){
+				newPoint = createPoint(800, 800);
+			}
+			addPolice(new Police(newPoint));
+		}
+		// 小偷随机出现：点不能与障碍物位置重合
+		Point newPoint = createPoint(700, 700);
+		while(checkPoint(newPoint)){
+			newPoint = createPoint(700, 700);
+		}
+		thief = new Thief(newPoint);
+		// 根据小偷位置，得出上下左右四个围捕点
+		targets.add(new Point(thief.location.x, thief.location.y + 2 * BaseRobot.RADIUS));
+		targets.add(new Point(thief.location.x, thief.location.y - 2 * BaseRobot.RADIUS));
+		targets.add(new Point(thief.location.x - 2 * BaseRobot.RADIUS, thief.location.y));
+		targets.add(new Point(thief.location.x + 2 * BaseRobot.RADIUS, thief.location.y));
+	}
+	//生成随机点
+	private Point createPoint(int x,int y){
+		return new Point(random.nextInt(x) + 50, random.nextInt(y) + 50);
+	}
+	//检查点是否有重合
+	private boolean checkPoint(Point p) {
+		return Utils.isCrahingObstacle(p.x, p.y,this);
 	}
 
 	// 绘制所有元素：障碍物、警察、小偷
@@ -148,8 +158,8 @@ public class HuntingPoints {
 	}
 
 	// 围捕成功的判断：根据当前各点位置来判断
-	
-	//法一：根据警察是否已抵达各自负责的围捕点来判断
+
+	// 法一：根据警察是否已抵达各自负责的围捕点来判断
 	private boolean catchThief(HuntingPoints p) {
 		boolean catched = true;
 
@@ -159,25 +169,25 @@ public class HuntingPoints {
 			int x = polices.get(j).findTarget(this).x;
 			int y = polices.get(j).findTarget(this).y;
 
-			// 警察目标点位置的合法性判断：与墙重合，则不采取行动
+			// 警察目标点位置的合法性判断：与墙重合，则转弯
 			if (x <= BaseRobot.RADIUS || y <= BaseRobot.RADIUS || x >= this.getWidth() - BaseRobot.RADIUS
 					|| y >= this.getHeight() - BaseRobot.RADIUS) {
-				break;
+				polices.get(j).obstacleAvoiding(x, y, p, true);
 			}
 
-			// 警察目标点位置的合法性判断：与障碍物重合，则不采取行动
+			// 警察目标点位置的合法性判断：与障碍物重合，则转弯
 			int i;
 			for (i = 0; i < getObstacles().size(); i++) {
 				int x1 = getObstacles().get(i).getLocation().x;
 				int y1 = getObstacles().get(i).getLocation().y;
 				if (Point.distance(x1, y1, x, y) < Obstacle.RADIUS + BaseRobot.RADIUS) {
-					break;
+					polices.get(j).obstacleAvoiding(x, y, p, true);
 				}
 			}
 			if (i < size)
 				break;
 		}
-		
+
 		// 4个警察与各自负责的围捕点的重合判断
 		for (int i = 0; i < polices.size(); i++) {
 			if (i == j)
@@ -186,29 +196,30 @@ public class HuntingPoints {
 			int y1 = polices.get(i).location.y;
 			if (Point.distance(x1, y1, polices.get(i).findTarget(this).getX(),
 					polices.get(i).findTarget(this).getY()) <= BaseRobot.RADIUS)
-				continue; //当前警察到达目标点
+				continue; // 当前警察到达目标点
 			else {
-				catched = false; //当有一个警察未到达目标点：则未捕获
+				catched = false; // 当有一个警察未到达目标点：则未捕获
 				return catched;
 			}
 		}
 		return catched;
 	}
-	
-	//法2：根据当前4个围捕点的状态来判断：4个点分别与障碍物、墙、或者某个警察重合（待fix）
-//	private boolean catchThief(HuntingPoints p){
-//		boolean catched = true;
-//		for(int i=0;i<targets.size();i++){ //遍历四个点,只要一个点三种状态都不符合即没捉到
-//			Point currPoint = targets.get(i);
-//			int x = currPoint.x;
-//			int y = currPoint.y;
-//			//判断围捕点状态
-//			if(!Utils.isCrahingWall(x, y, p) && !Utils.isCrahingObstacle(x, y, p) && !Utils.isCollision(x, y, p)){
-//				catched = false;
-//				return catched;
-//			}
-//		}
-//		return catched;
-//	}
-	
+
+	// 法2：根据当前4个围捕点的状态来判断：4个点分别与障碍物、墙、或者某个警察重合（待fix）
+	// private boolean catchThief(HuntingPoints p){
+	// boolean catched = true;
+	// for(int i=0;i<targets.size();i++){ //遍历四个点,只要一个点三种状态都不符合即没捉到
+	// Point currPoint = targets.get(i);
+	// int x = currPoint.x;
+	// int y = currPoint.y;
+	// //判断围捕点状态
+	// if(!Utils.isCrahingWall(x, y, p) && !Utils.isCrahingObstacle(x, y, p) &&
+	// !Utils.isCollision(x, y, p)){
+	// catched = false;
+	// return catched;
+	// }
+	// }
+	// return catched;
+	// }
+
 }
