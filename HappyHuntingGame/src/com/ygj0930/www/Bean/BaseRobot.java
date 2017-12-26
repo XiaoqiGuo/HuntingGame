@@ -11,7 +11,6 @@ public abstract class BaseRobot {
 	public String type = "BaseRobot";
 	public static final int RADIUS = 15; // 半径
 	public static final int TURN_UNIT = 1; // 以1度为转向单位，角度越小，机器人越灵活
-
 	protected Point location; // 机器人位置
 	protected int direction; // 朝向
 	protected int speed; // 速度(步长)
@@ -49,11 +48,10 @@ public abstract class BaseRobot {
 		middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
 
 		// 循环检测壁障位置是否有障碍/墙/其他机器人 by GXQ
-		int count = 7;
+		int count = 4; // 转向次数
 		while ((checkForCrahingWall(middle.x, middle.y, p) == true || checkForCollision(middle.x, middle.y, p) == true)
 				&& count > 0) {
 			if (checkForCrahingWall(middle.x, middle.y, p) == true)
-			// 若碰撞墙：绕行。
 			{
 				direction += 90;
 				if (direction > 180)
@@ -67,9 +65,9 @@ public abstract class BaseRobot {
 			middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
 			count--;
 		}
-		if (count == 0)
-			return;// 无处可走时先停一步，若是小偷下一步检测应被抓住了，警察可能绕出
-		else
+		if (count == 0) {
+			return;
+		} else
 			setLocation(middle); // 下一步的点无碰撞，则更新点坐标：让当前点移动到下一个点，
 
 	}

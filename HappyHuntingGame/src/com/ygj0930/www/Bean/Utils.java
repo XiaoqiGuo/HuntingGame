@@ -28,10 +28,10 @@ public class Utils {
 		return isCrash;
 	}
 	
-	// 警察碰撞检测
+	// 警察到达检测：警察到达了围捕点
 	public static boolean isCollision(int x, int y, HuntingPoints points) {
 		boolean isCrash = false;
-		for (int i = 0; i < points.getPolices().size(); i++) { // 警察碰撞检测
+		for (int i = 0; i < points.getPolices().size(); i++) {
 			int x1 = points.getPolice(i).getLocation().x;
 			int y1 = points.getPolice(i).getLocation().y;
 			if (Point.distance(x1, y1, x, y) < 2 * BaseRobot.RADIUS) { // 两点距离小于小偷机器人与警察机器人半径之和
