@@ -48,29 +48,29 @@ public abstract class BaseRobot {
 		middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
 		middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
 
-		// 撞墙检查：若下一步小偷撞墙，则掉头【待解决：若警察也掉头，会出现出去的警察再也回不来...】
-		if (checkForCrahingWall(middle.x, middle.y, p) == false) {
-			if (this.getColor() != Color.CYAN) {
-				direction += 180;
-				if (direction > 180)
-					direction -= 360;
-				if (direction <= -180)
-					direction += 360;
+		// 循环检测壁障位置是否有障碍/墙/其他机器人  by GXQ
+		int count=7;
+		while ((checkForCrahingWall(middle.x, middle.y, p) == true ||checkForCollision(middle.x, middle.y, p) == true) && count>0) {
+				if(checkForCrahingWall(middle.x, middle.y, p) == true) 
+					// 若碰撞墙：绕行。
+				{
+					direction += 45;
+					if (direction > 180)
+						direction -= 360;
+					if (direction <= -180)
+						direction += 360;
+				}
+				// 若碰撞人或障碍物:在检测函数中计算出避障方向。
+				// 在避障方向上走一步
 				middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
 				middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
-			}
+				count--;
 		}
+		if (count==0 ) 
+			return;//无处可走时先停一步，若是小偷下一步检测应被抓住了，警察可能绕出
+		else
+			setLocation(middle); // 下一步的点无碰撞，则更新点坐标：让当前点移动到下一个点，
 
-		// 碰撞检测：下一个点是否会碰撞
-		if (checkForCollision(middle.x, middle.y, p) == false) {
-			setLocation(middle); // 下一步的点无碰撞，则更新点坐标：让当前点移动到下一个点
-		} else {
-			// 若碰撞:在检测函数中计算出避障方向。
-			// 在避障方向上走一步
-			middle.x = (int) (location.x + speed * Math.cos((double) direction * Math.PI / 180.0));
-			middle.y = (int) (location.y - speed * Math.sin((double) direction * Math.PI / 180.0));
-			setLocation(middle);
-		}
 	}
 
 	// 定时器每次刷新式更新机器人位置：走一步
