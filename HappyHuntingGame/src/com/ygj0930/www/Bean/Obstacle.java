@@ -3,7 +3,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
 public class Obstacle {
-	public static final int	RADIUS = 30;
+	public static final int	RADIUS = 15;
 	private Point 	location;
 	
 	public Obstacle(Point loc) {

@@ -12,7 +12,7 @@ public class HuntingPoints {
 	public static final int UPDATE_RATE = 15; // 界面刷新频率
 
 	private Random random = new Random();
-	private int width = 1000, height = 1000; // 面板的宽、高
+	private int width = 500, height =500; // 面板的宽、高
 	private Thief thief; // 小偷
 	private ArrayList<Point> targets = new ArrayList<Point>(); // 包围小偷的上下左右四个点：警察要到达的围捕点
 	private ArrayList<BaseRobot> polices; // 警察机器人
@@ -65,37 +65,37 @@ public class HuntingPoints {
 		Obstacles = new ArrayList<Obstacle>();
 
 		// 设置障碍物：16个固定障碍
-		addObstacle(new Obstacle(new Point(100, 100)));
+		addObstacle(new Obstacle(new Point(100, 50)));
+		addObstacle(new Obstacle(new Point(100, 150)));
 		addObstacle(new Obstacle(new Point(100, 300)));
-		addObstacle(new Obstacle(new Point(100, 600)));
-		addObstacle(new Obstacle(new Point(100, 900)));
-		addObstacle(new Obstacle(new Point(300, 100)));
+		addObstacle(new Obstacle(new Point(100, 450)));
+		addObstacle(new Obstacle(new Point(150, 50)));
+		addObstacle(new Obstacle(new Point(150, 150)));
+		addObstacle(new Obstacle(new Point(150, 300)));
+		addObstacle(new Obstacle(new Point(150, 450)));
+		addObstacle(new Obstacle(new Point(300, 50)));
+		addObstacle(new Obstacle(new Point(300, 150)));
 		addObstacle(new Obstacle(new Point(300, 300)));
-		addObstacle(new Obstacle(new Point(300, 600)));
-		addObstacle(new Obstacle(new Point(300, 900)));
-		addObstacle(new Obstacle(new Point(600, 100)));
-		addObstacle(new Obstacle(new Point(600, 300)));
-		addObstacle(new Obstacle(new Point(600, 600)));
-		addObstacle(new Obstacle(new Point(600, 900)));
-		addObstacle(new Obstacle(new Point(900, 100)));
-		addObstacle(new Obstacle(new Point(900, 300)));
-		addObstacle(new Obstacle(new Point(900, 600)));
-		addObstacle(new Obstacle(new Point(900, 900)));
-		for (int i = 0; i <= 15; i++) { // 15个随机障碍
-			addObstacle(new Obstacle(new Point(random.nextInt(800) + 100, random.nextInt(800) + 100)));
+		addObstacle(new Obstacle(new Point(300, 450)));
+		addObstacle(new Obstacle(new Point(400, 50)));
+		addObstacle(new Obstacle(new Point(400, 150)));
+		addObstacle(new Obstacle(new Point(400, 300)));
+		addObstacle(new Obstacle(new Point(400, 450)));
+		for (int i = 0; i <= 10; i++) { // 15个随机障碍
+			addObstacle(new Obstacle(new Point(random.nextInt(400) + 50, random.nextInt(400) + 50)));
 		}
 		// 警察随机出现：点不能与障碍物位置重合
 		for (int i = 0; i < 4; i++) {
-			Point newPoint = createPoint(800, 800);
+			Point newPoint = createPoint(400, 400);
 			while (checkPoint(newPoint)) {
-				newPoint = createPoint(800, 800);
+				newPoint = createPoint(400, 400);
 			}
 			addPolice(new Police(newPoint));
 		}
 		// 小偷随机出现：点不能与障碍物位置重合
-		Point newPoint = createPoint(700, 700);
+		Point newPoint = createPoint(350, 350);
 		while (checkPoint(newPoint)) {
-			newPoint = createPoint(700, 700);
+			newPoint = createPoint(350, 350);
 		}
 		thief = new Thief(newPoint);
 		// 根据小偷位置，得出上下左右四个围捕点
@@ -107,7 +107,7 @@ public class HuntingPoints {
 
 	// 生成随机点
 	private Point createPoint(int x, int y) {
-		return new Point(random.nextInt(x) + 50, random.nextInt(y) + 50);
+		return new Point(random.nextInt(x) + 25, random.nextInt(y) + 25);
 	}
 
 	// 检查点是否有重合

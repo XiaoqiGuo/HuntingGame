@@ -9,7 +9,7 @@ import java.lang.Math;
 public abstract class BaseRobot {
 
 	public String type = "BaseRobot";
-	public static final int RADIUS = 15; // 半径
+	public static final int RADIUS = 10; // 半径
 	public static final int TURN_UNIT = 1; // 以1度为转向单位，角度越小，机器人越灵活
 	protected Point location; // 机器人位置
 	protected int direction; // 朝向
