@@ -12,7 +12,7 @@ public class HuntingPoints {
 	public static final int UPDATE_RATE = 15; // 界面刷新频率
 
 	private Random random = new Random();
-	private int width = 500, height =500; // 面板的宽、高
+	private int width = 500, height = 500; // 面板的宽、高
 	private Thief thief; // 小偷
 	private ArrayList<Point> targets = new ArrayList<Point>(); // 包围小偷的上下左右四个点：警察要到达的围捕点
 	private ArrayList<BaseRobot> polices; // 警察机器人
@@ -64,26 +64,18 @@ public class HuntingPoints {
 		polices = new ArrayList<BaseRobot>();
 		Obstacles = new ArrayList<Obstacle>();
 
-		// 设置障碍物：16个固定障碍
-		addObstacle(new Obstacle(new Point(100, 50)));
-		addObstacle(new Obstacle(new Point(100, 150)));
-		addObstacle(new Obstacle(new Point(100, 300)));
-		addObstacle(new Obstacle(new Point(100, 450)));
-		addObstacle(new Obstacle(new Point(150, 50)));
-		addObstacle(new Obstacle(new Point(150, 150)));
-		addObstacle(new Obstacle(new Point(150, 300)));
-		addObstacle(new Obstacle(new Point(150, 450)));
-		addObstacle(new Obstacle(new Point(300, 50)));
-		addObstacle(new Obstacle(new Point(300, 150)));
-		addObstacle(new Obstacle(new Point(300, 300)));
-		addObstacle(new Obstacle(new Point(300, 450)));
-		addObstacle(new Obstacle(new Point(400, 50)));
-		addObstacle(new Obstacle(new Point(400, 150)));
-		addObstacle(new Obstacle(new Point(400, 300)));
-		addObstacle(new Obstacle(new Point(400, 450)));
-		for (int i = 0; i <= 10; i++) { // 15个随机障碍
-			addObstacle(new Obstacle(new Point(random.nextInt(400) + 50, random.nextInt(400) + 50)));
+		// 设置障碍物
+		for(int i=1;i<=4;i++){
+			for(int j=1;j<=4;j++){
+				addObstacle(new Obstacle(new Point(100*i, 100*j)));
+			}
 		}
+		for(int i=1;i<=3;i++){
+			addObstacle(new Obstacle(new Point(150, 100*i+50)));
+			addObstacle(new Obstacle(new Point(250, 100*i+50)));
+			addObstacle(new Obstacle(new Point(350, 100*i+50)));
+		}
+		
 		// 警察随机出现：点不能与障碍物位置重合
 		for (int i = 0; i < 4; i++) {
 			Point newPoint = createPoint(400, 400);
@@ -133,7 +125,7 @@ public class HuntingPoints {
 				endTime = new Date();
 				System.out.println(endTime + "：围捕结束！");
 				System.out.println("耗时：" + (endTime.getTime() - startTime.getTime()) + "ms");
-				flag=false;
+				flag = false;
 			}
 			// System.exit(0);
 			return;
@@ -231,7 +223,8 @@ public class HuntingPoints {
 			int x = currPoint.x;
 			int y = currPoint.y;
 			// 判断围捕点状态
-			if (!Utils.isCrahingWall(x, y, p) && !Utils.isCollision(x, y, p) && !Utils.isCrahingObstacle(x, y, p)) {
+//			if (!Utils.isCrahingWall(x, y, p) && !Utils.isCollision(x, y, p) && !Utils.isCrahingObstacle(x, y, p))
+			if (!Utils.isCrahingWall(x, y, p) && !Utils.isCollision(x, y, p)){
 				catched = false;
 				return catched;
 			}

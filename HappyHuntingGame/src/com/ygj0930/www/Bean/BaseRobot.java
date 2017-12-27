@@ -53,7 +53,7 @@ public abstract class BaseRobot {
 				&& count > 0) {
 			if (checkForCrahingWall(middle.x, middle.y, p) == true)
 			{
-				direction += 90;
+				direction -= 90;
 				if (direction > 180)
 					direction -= 360;
 				if (direction <= -180)
