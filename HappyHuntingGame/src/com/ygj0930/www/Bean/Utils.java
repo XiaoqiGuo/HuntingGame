@@ -9,7 +9,6 @@ public class Utils {
 	public static boolean isCrahingWall(int x, int y, HuntingPoints points) {
 		if (x <= BaseRobot.RADIUS || y <= BaseRobot.RADIUS || x >= points.getWidth() - BaseRobot.RADIUS
 				|| y >= points.getHeight() - BaseRobot.RADIUS) {// 点的合法性判断：下一步在当前点内或者超出了面板范围
-			System.out.println("("+x+","+y+") 是墙");
 			return true;
 		}
 		return false;
@@ -22,7 +21,6 @@ public class Utils {
 			int x1 = points.getObstacles().get(i).getLocation().x;
 			int y1 = points.getObstacles().get(i).getLocation().y;
 			if (Point.distance(x1, y1, x, y) < Obstacle.RADIUS + BaseRobot.RADIUS) { // 两点距离小于障碍物半径+机器人半径
-				System.out.println("("+x+","+y+") 是障碍物");
 				isCrash = true;
 				return isCrash;
 			}
@@ -30,14 +28,13 @@ public class Utils {
 		return isCrash;
 	}
 	
-	// 警察碰撞检测
+	// 警察到达检测：警察到达了围捕点
 	public static boolean isCollision(int x, int y, HuntingPoints points) {
 		boolean isCrash = false;
-		for (int i = 0; i < points.getPolices().size(); i++) { // 警察碰撞检测
+		for (int i = 0; i < points.getPolices().size(); i++) {
 			int x1 = points.getPolice(i).getLocation().x;
 			int y1 = points.getPolice(i).getLocation().y;
 			if (Point.distance(x1, y1, x, y) < 2 * BaseRobot.RADIUS) { // 两点距离小于小偷机器人与警察机器人半径之和
-				System.out.println("("+x+","+y+") 是机器人");
 				isCrash = true;
 				return isCrash;
 			}

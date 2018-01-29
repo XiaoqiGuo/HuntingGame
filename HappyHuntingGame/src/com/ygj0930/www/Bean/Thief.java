@@ -5,7 +5,7 @@ import java.awt.Point;
 
 public class Thief extends BaseRobot {
 	public String type = "Thief";
-
+	
 	public Thief(Point loc) {
 		super(loc);
 	}
@@ -13,7 +13,7 @@ public class Thief extends BaseRobot {
 	public Color getColor() {
 		return Color.yellow; // 小偷是黄色
 	}
-
+    
 	// 小偷逃跑策略：往最近的警察的反方向跑，或随机左右转向跑
 	// 实验显示：单纯往最近警察的反方向跑，小偷的路线随机性不明显；全程随机，则小偷前期在原地乱转而位移不明显；
 	//因此综合采用两种方式：每一步，要么反向跑，要么随机转向

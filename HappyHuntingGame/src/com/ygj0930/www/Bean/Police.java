@@ -48,14 +48,14 @@ public class Police extends BaseRobot {
 	@Override
 	protected void obstacleAvoiding(int x, int y, HuntingPoints p,boolean is_obstacle) {
 		if(is_obstacle){
-			//vectorDirection(x, y, p); //障碍物避障：人工势场法
+//			vectorDirection(x, y, p); //障碍物避障：人工势场法
 			turnLeftDirection(x, y); //障碍物避障：绕行法，挨着障碍物边缘走
 		}else{
 			turnLeftDirection(x, y); //机器人之间避障：转弯绕行即可
 		}
 	}
 
-	// 避障算法1：直接左转90,绕行障碍物
+	// 避障算法2：直接左转90,绕行障碍物
 	private void turnLeftDirection(int x, int y) {
 		int xdiff, ydiff, d;
 		double hdiff;
@@ -73,10 +73,11 @@ public class Police extends BaseRobot {
 		this.direction = d;
 	}
 
-	// 避障算法2：人工势场法
+	// 避障算法1：人工势场法
 	private void vectorDirection(int x, int y, HuntingPoints p) {
 		Point targetPoint = p.getTarget(this);
 
+		//====根据向量的平移，我们令障碍物为坐标原点，计算出障碍物指向机器人、目标点的向量坐标值
 		// 障碍物指向机器人的向量
 		double x1 = this.location.x - x;
 		double y1 = this.location.y - y;
